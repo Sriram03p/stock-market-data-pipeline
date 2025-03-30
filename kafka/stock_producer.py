@@ -4,7 +4,7 @@ import requests
 from kafka import KafkaProducer
 
 # Alpha Vantage API Key (Get a free one at https://www.alphavantage.co/)
-API_KEY = "your_alpha_vantage_api_key"
+API_KEY = "FQAR79OPRXS4F1U6"
 STOCK_SYMBOLS = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA"]  # Add more stock symbols as needed
 
 # Kafka Producer setup

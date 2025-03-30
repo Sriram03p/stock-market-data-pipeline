@@ -1,2 +1,9 @@
 api key:FQAR79OPRXS4F1U6
 
+start the containers:
+docker-compose up -d
+
+docker commands:
+docker exec -it kafka bash
+kafka-topics --create --topic stock_prices --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+kafka-topics --list --bootstrap-server localhost:9092
