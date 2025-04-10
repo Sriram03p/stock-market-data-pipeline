@@ -1,35 +1,35 @@
 import json
-# import snowflake.connector
+import snowflake.connector
 from kafka import KafkaConsumer
 
 # Snowflake connection details
-SNOWFLAKE_ACCOUNT = "your_snowflake_account"
-SNOWFLAKE_USER = "your_username"
-SNOWFLAKE_PASSWORD = "your_password"
-SNOWFLAKE_DATABASE = "your_database"
-SNOWFLAKE_SCHEMA = "your_schema"
-SNOWFLAKE_WAREHOUSE = "your_warehouse"
+SNOWFLAKE_ACCOUNT = "EQRINUO-CI82288"
+SNOWFLAKE_USER = "sriram"
+SNOWFLAKE_PASSWORD = "eX9dACkLCJtpqRc"
+SNOWFLAKE_DATABASE = "STOCK_DB"
+SNOWFLAKE_SCHEMA = "STOCK_SCHEMA"
+SNOWFLAKE_WAREHOUSE = "STOCK_WAREHOUSE"
 
-# # Connect to Snowflake
-# conn = snowflake.connector.connect(
-#     user=SNOWFLAKE_USER,
-#     password=SNOWFLAKE_PASSWORD,
-#     account=SNOWFLAKE_ACCOUNT
-# )
+# Connect to Snowflake
+conn = snowflake.connector.connect(
+    user=SNOWFLAKE_USER,
+    password=SNOWFLAKE_PASSWORD,
+    account=SNOWFLAKE_ACCOUNT
+)
 
-# cur = conn.cursor()
-# cur.execute(f"USE WAREHOUSE {SNOWFLAKE_WAREHOUSE}")
-# cur.execute(f"USE DATABASE {SNOWFLAKE_DATABASE}")
-# cur.execute(f"USE SCHEMA {SNOWFLAKE_SCHEMA}")
+cur = conn.cursor()
+cur.execute(f"USE WAREHOUSE {SNOWFLAKE_WAREHOUSE}")
+cur.execute(f"USE DATABASE {SNOWFLAKE_DATABASE}")
+cur.execute(f"USE SCHEMA {SNOWFLAKE_SCHEMA}")
 
-# # Ensure table exists
-# cur.execute("""
-# CREATE TABLE IF NOT EXISTS stock_prices (
-#     symbol STRING,
-#     timestamp STRING,
-#     price FLOAT
-# )
-# """)
+# Ensure table exists
+cur.execute("""
+CREATE TABLE IF NOT EXISTS stock_prices (
+    symbol STRING,
+    timestamp STRING,
+    price FLOAT
+)
+""")
 
 # Kafka Consumer setup
 consumer = KafkaConsumer(
@@ -47,5 +47,5 @@ for message in consumer:
     INSERT INTO stock_prices (symbol, timestamp, price)
     VALUES ('{stock_data["symbol"]}', '{stock_data["timestamp"]}', {stock_data["price"]})
     """
-    # cur.execute(query)
-    # conn.commit()
+    cur.execute(query)
+    conn.commit()
