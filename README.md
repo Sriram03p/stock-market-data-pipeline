@@ -107,8 +107,7 @@ graph LR
 
 ## 📌 Notes
 
-- Replace `YOUR_USER`, `YOUR_PASSWORD`, etc. in code files with your actual credentials or use `.env`.
+- Replace `YOUR_USER`, `YOUR_PASSWORD`, etc. in code files with your actual credentials 
 - Kafka must be running before launching producer/consumer.
 - You need a free Alpha Vantage API key: [Get it here](https://www.alphavantage.co/support/#api-key)
-- Snowflake SQL Task for deduplication must be defined manually or via UI.
 
