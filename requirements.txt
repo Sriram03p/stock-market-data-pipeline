@@ -10,3 +10,4 @@ textblob==0.17.1
 nltk==3.8.1
 statsmodels==0.14.1
 pmdarima==2.0.4
+ollama
