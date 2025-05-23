@@ -1,14 +1,15 @@
 import streamlit as st
 import pandas as pd
-import snowflake.connector
 import requests
+import snowflake.connector
 from bs4 import BeautifulSoup
 import yfinance as yf
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+from datetime import datetime
 from textblob import TextBlob
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from sqlalchemy import create_engine
+import ollama
 
 # ------------------- CONFIG -------------------
 @st.cache_resource
@@ -23,7 +24,10 @@ def get_snowflake_engine():
     engine = create_engine(url)
     return engine
 
-# ------------------- TAB 1: LIVE STOCK FEED -------------------
+ALPHA_VANTAGE_API_KEY = 'B5WJBWUZC8XHRVOF'
+TWELVE_DATA_API_KEY = '8a97b0338c804639931f90bff73311cc'
+
+# ------------------- LIVE STOCK FEED -------------------
 def show_live_feed():
     engine = get_snowflake_engine()
     query = """
@@ -32,7 +36,6 @@ def show_live_feed():
         LIMIT 100
     """
     df = pd.read_sql(query, engine)
-
     st.subheader("🔴 Live Stock Prices")
     st.dataframe(df)
 
@@ -40,10 +43,7 @@ def show_live_feed():
     filtered = df[df["symbol"] == symbol].sort_values("timestamp")
     st.line_chart(filtered.set_index("timestamp")["price"])
 
-# ------------------- TAB 2: INSIGHTS + FORECAST -------------------
-ALPHA_VANTAGE_API_KEY = 'B5WJBWUZC8XHRVOF'
-TWELVE_DATA_API_KEY = '8a97b0338c804639931f90bff73311cc'
-
+# ------------------- STOCK INSIGHTS & FORECAST -------------------
 def get_stock_news(symbol):
     try:
         url = f"https://finviz.com/quote.ashx?t={symbol}"
@@ -118,7 +118,6 @@ def show_stock_insights():
     stock_symbol = st.text_input("Enter Stock Symbol (e.g., AAPL, MSFT)").upper()
 
     if st.button("Analyze") and stock_symbol:
-        # News
         st.subheader("📰 News Headlines")
         news_df = get_stock_news(stock_symbol)
         if not news_df.empty:
@@ -126,28 +125,55 @@ def show_stock_insights():
             color, message = get_stock_sentiment(news_df)
             st.markdown(f'<p style="color:{color}"><b>{message}</b></p>', unsafe_allow_html=True)
 
-        # Historical data
         st.subheader("📊 Historical Stock Data")
         stock_data = get_stock_data(stock_symbol)
         if not stock_data.empty:
             st.line_chart(stock_data['Close'])
 
-            # Forecast
             st.subheader("🔮 Forecast Stock Price")
             forecast_days = st.slider("Forecast Period (days)", 10, 180, 60)
             forecast = ets_demand_forecast(stock_data, forecast_days)
             plot_demand_forecast(stock_data, forecast)
 
+# ------------------- CHATBOT USING OLLAMA -------------------
+def show_chatbot():
+    st.subheader("💬 AI Chatbot (Ask your doubts here)")
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "system", "content": "You are a helpful assistant."}
+        ]
+
+    for msg in st.session_state.messages[1:]:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    user_input = st.chat_input("Ask a question...")
+    if user_input:
+        st.chat_message("user").markdown(user_input)
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+        with st.chat_message("assistant"):
+            response = ollama.chat(
+                model="phi",
+                messages=st.session_state.messages
+            )
+            reply = response['message']['content']
+            st.markdown(reply)
+
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+
 # ------------------- MAIN APP -------------------
 def main():
-    st.set_page_config(layout="wide", page_title="📈 Stock Market Dashboard")
-    st.title("📊 Real-Time Stock Dashboard")
+    st.set_page_config(layout="wide", page_title="📊 Stock + Chatbot Dashboard")
+    st.title("📈 Real-Time Stock Market + 🤖 AI Assistant")
 
-    tab1, tab2 = st.tabs(["📡 Live Market Feed", "🧠 Stock Insights & Forecast"])
+    tab1, tab2, tab3 = st.tabs(["📡 Live Market Feed", "📊 Insights & Forecast", "🤖 AI Chatbot"])
     with tab1:
         show_live_feed()
     with tab2:
         show_stock_insights()
+    with tab3:
+        show_chatbot()
 
 if __name__ == "__main__":
     main()
