@@ -44,7 +44,8 @@ graph LR
   - Plotting individual stock trends
   - Analyzing sentiment of top headlines
   - Forecasting future stock prices
-  ✅ Integrated an LLM
+- ✅ Integrated an LLM
+
   
 
 ---
