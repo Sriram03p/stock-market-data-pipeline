@@ -1,0 +1,5 @@
+docker exec -it kafka1 kafka-topics --create --topic stock_prices --bootstrap-server localhost:9092 --partitions 3 --replication-factor 3
+
+cron job
+0 9 * * * /usr/bin/python3 /path/to/producer.py >> /tmp/producer.log 2>&1
+2 9 * * * /usr/bin/python3 /path/to/consumer.py >> /tmp/consumer.log 2>&1
