@@ -1,0 +1,37 @@
+📊 Explanation of Charts
+
+Price Trend with 7-Day Moving Average
+
+Blue line: Daily stock closing prices
+
+Orange line: 7-day moving average → smooths short-term ups and downs
+
+Usefulness: Helps identify long-term price trends
+
+Daily Return %
+
+Bars showing percentage gain/loss each day
+
+Above 0: Stock gained that day
+
+Below 0: Stock lost that day
+
+Usefulness: Helps spot daily volatility and sudden jumps/drops
+
+Rolling Volatility (7-Day Std Dev)
+
+Measures how much the price fluctuates over 7 days
+
+Higher value = more risk
+
+Lower value = stable price movement
+
+Usefulness: Useful for risk assessment and trading decisions
+
+Cumulative Return Over Time
+
+Shows the total return since the start of the data
+
+Always accumulates gains/losses across days
+
+Usefulness: Helps track overall investment performance
